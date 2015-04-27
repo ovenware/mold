@@ -1,0 +1,32 @@
+{
+  "name": "mold",
+  "version": "0.1.0",
+  "description": " for AngularJS",
+  "directories": {
+    "example": "example",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ovenware/mold.git"
+  },
+  "keywords": [
+    "angular",
+    "angularjs",
+    "mold"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ovenware/mold",
+  "devDependencies": {
+    "connect-modrewrite": "^0.7.9",
+    "grunt": "^0.4.1",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-concat": "^0.4.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-ng-annotate": "^0.3.0",
+    "jshint-stylish": "^0.2.0",
+    "load-grunt-tasks": "^0.4.0",
+    "time-grunt": "^0.3.1"
+  }
+}
