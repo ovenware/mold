@@ -1,0 +1,175 @@
+<!doctype html>
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>mold - example</title>
+    <meta name="description" content="">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  </head>
+  <body ng-app="MoldExample" ng-controller="AppCtrl">
+    <div my-mold></div>
+    <script src="angular.min.js"></script>
+    <script src="../dist/mold.js"></script>
+    <script>
+      angular.module('MoldExample', ['Mold'])
+      .controller('AppCtrl', [
+      '$scope',
+      'dataFactory',
+      function($scope, dataFactory) {
+        dataFactory.get('root').then(function(mold) {
+          $scope.$mold = mold;
+        });
+      }])
+      .config([
+      '$rootScopeProvider',
+      function($rootScopeProvider) {
+        $rootScopeProvider.digestTtl(20);
+      }])
+      .factory('myMoldRender', [
+        'moldRenderer',
+        function(moldRenderer) {
+          var renderer
+            , specialRenderer
+            ;
+
+          function getHeir(type) {
+            return type === 'group' ? ['base'] : null;
+          }
+
+          function getParameter(type) {
+            return type === 'content' ? ['content'] : ['color'];
+          }
+
+          specialRenderer = {
+            'color': function(scope, value) {
+              if (value) {
+                scope.$node.style.backgroundColor = value;
+              } else {
+                scope.$node.style.backgroundColor = '';
+              }
+            },
+            'content': function(scope, value) {
+              if (value) {
+                scope.$node.innerText = value;
+              } else {
+                scope.$node.innerText = '';
+              }
+            }
+          };
+
+          renderer = moldRenderer.create(getParameter, getHeir);
+
+          renderer.create = function(type) {
+            return document.createElement('div');
+          };
+
+          renderer.handleParameterChange = function(scope, parameter, value) {
+            var fun = specialRenderer[parameter];
+
+            if (fun) {
+              fun(scope, value);
+            } else if (parameter !== 'component'){
+              this.setAttr(scope, parameter, value);
+            }
+          };
+          return renderer;
+        }
+      ])
+      .factory('dataFactory', [
+        '$q',
+        function($q) {
+          var hash = {
+                'root': {
+                  'id': 'root',
+                  'unitType': 'group',
+                  'heir': ['g1', 'g2']
+                },
+                'g1': {
+                  'id': 'g1',
+                  'unitType': 'group',
+                  'color': '#F30',
+                  'heir': ['g1c1', 'g1c2']
+                },
+                'g2': {
+                  'id': 'g2',
+                  'unitType': 'group',
+                  'color': '#3F0',
+                  'heir': ['g2c1', 'g2c2']
+                },
+                'g1c1': {
+                  'id': 'g1c1',
+                  'unitType': 'content',
+                  'content': 'group 1 content 1'
+                },
+                'g1c2': {
+                  'id': 'g1c2',
+                  'unitType': 'content',
+                  'content': 'group 1 content 2'
+                },
+                'g2c1': {
+                  'id': 'g2c1',
+                  'unitType': 'content',
+                  'content': 'group 2 content 1'
+                },
+                'g2c2': {
+                  'id': 'g2c2',
+                  'unitType': 'content',
+                  'content': 'group 2 content 2'
+                }
+              };
+          return {
+            get: function(id) {
+              var defer = $q.defer()
+                , unit = hash[id]
+                ;
+
+              if (unit) {
+                defer.resolve(unit);
+              } else {
+                defer.resolve();
+              }
+              return defer.promise;
+            }
+          };
+        }
+      ])
+      .directive('myMold', [
+        'mold',
+        'myMoldRender',
+        'dataFactory',
+        function(mold, myMoldRender, dataFactory) {
+          var constructer = mold.create('my-mold', dataFactory, myMoldRender)
+            ;
+
+          return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+              var watchCleaner;
+
+              scope.$renderType = 'my';
+
+              function init(nv) {
+                constructer.init(scope, element);
+              }
+
+              if (scope.$mold) {
+                init(scope.$mold);
+              } else {
+                watchCleaner = scope.$watch('$mold', function(nv) {
+
+                  if (nv) {
+                    watchCleaner();
+                    init(nv);
+                  }
+                });
+              }
+            }
+          };
+        }
+      ])
+      ;
+    </script>
+</body>
+</html>

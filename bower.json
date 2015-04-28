@@ -6,9 +6,6 @@
   "dependencies": {
     "angular": "~1.3.15"
   },
-  "authors": [
-    "zhuyan <zy.arcane@gmail.com>"
-  ],
   "keywords": [
     "angular",
     "directive",

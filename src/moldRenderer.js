@@ -21,21 +21,23 @@ function() {
         , that = this
         ;
 
-      scope.$watch(source, function(nv, ov) {
-        var parameter
-          , i = 0
-          , value
-          ;
+      if (parameters.length) {
+        scope.$watch(source, function(nv, ov) {
+          var parameter
+            , i = 0
+            , value
+            ;
 
-        for (; (parameter = parameters[i]); i++) {
-          value = nv[parameter];
+          for (; (parameter = parameters[i]); i++) {
+            value = nv[parameter];
 
-          if (count || !ov || !angular.equals(value, ov[parameter])) {
-            that.filterParameterValue(scope, source, parameter, value);
+            if (count || !ov || !angular.equals(value, ov[parameter])) {
+              that.filterParameterValue(scope, source, parameter, value);
+            }
           }
-        }
-        count = 0;
-      }, true);
+          count = 0;
+        }, true);
+      }
     };
     // 过滤变化值
     this.filterParameterValue = function(scope, source, parameter, value) {
