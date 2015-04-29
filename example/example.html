@@ -7,9 +7,76 @@
     <meta name="description" content="">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style type="text/css">
+      .root {
+        border: 2px solid #f00;
+      }
+      .group {
+        border: 2px solid #00f;
+      }
+    </style>
   </head>
   <body ng-app="MoldExample" ng-controller="AppCtrl">
     <div my-mold></div>
+    <pre>
+    {
+      'root': {
+        'id': 'root',
+        'unitType': 'group',
+        'css': 'root',
+        'heir': ['g1', 'g2']
+      },
+      'g1': {
+        'id': 'g1',
+        'unitType': 'group',
+        'css': 'group',
+        'heir': ['g1c1']
+      },
+      'g2': {
+        'id': 'g2',
+        'unitType': 'group',
+        'css': 'group',
+        'heir': ['g2c1', 'g2c2', 'g2g1']
+      },
+      'g1c1': {
+        'id': 'g1c1',
+        'unitType': 'content',
+        'content': 'g1 c1'
+      },
+      'g2c1': {
+        'id': 'g2c1',
+        'unitType': 'content',
+        'content': 'g2 c1'
+      },
+      'g2c2': {
+        'id': 'g2c2',
+        'unitType': 'content',
+        'content': 'g2 c2'
+      },
+      'g2g1': {
+        'id': 'g2g1',
+        'unitType': 'group',
+        'css': 'group',
+        'heir': ['g2g1c1', 'g2g1g1']
+      },
+      'g2g1c1': {
+        'id': 'g2g1c1',
+        'unitType': 'content',
+        'content': 'g2 g1 c1'
+      },
+      'g2g1g1': {
+        'id': 'g2g1g1',
+        'unitType': 'group',
+        'css': 'group',
+        'heir': ['g2g1g1c1']
+      },
+      'g2g1g1c1': {
+        'id': 'g2g1g1c1',
+        'unitType': 'content',
+        'content': 'g2 g1 g1 c1'
+      }
+    }
+    </pre>
     <script src="angular.min.js"></script>
     <script src="../dist/mold.js"></script>
     <script>
@@ -39,15 +106,15 @@
           }
 
           function getParameter(type) {
-            return type === 'content' ? ['content'] : ['color'];
+            return type === 'content' ? ['content'] : ['css'];
           }
 
           specialRenderer = {
-            'color': function(scope, value) {
+            'css': function(scope, value) {
               if (value) {
-                scope.$node.style.backgroundColor = value;
+                scope.$node.className = value;
               } else {
-                scope.$node.style.backgroundColor = '';
+                scope.$node.className = '';
               }
             },
             'content': function(scope, value) {
@@ -84,39 +151,57 @@
                 'root': {
                   'id': 'root',
                   'unitType': 'group',
+                  'css': 'root',
                   'heir': ['g1', 'g2']
                 },
                 'g1': {
                   'id': 'g1',
                   'unitType': 'group',
-                  'color': '#F30',
-                  'heir': ['g1c1', 'g1c2']
+                  'css': 'group',
+                  'heir': ['g1c1']
                 },
                 'g2': {
                   'id': 'g2',
                   'unitType': 'group',
-                  'color': '#3F0',
-                  'heir': ['g2c1', 'g2c2']
+                  'css': 'group',
+                  'heir': ['g2c1', 'g2c2', 'g2g1']
                 },
                 'g1c1': {
                   'id': 'g1c1',
                   'unitType': 'content',
-                  'content': 'group 1 content 1'
-                },
-                'g1c2': {
-                  'id': 'g1c2',
-                  'unitType': 'content',
-                  'content': 'group 1 content 2'
+                  'content': 'g1 c1'
                 },
                 'g2c1': {
                   'id': 'g2c1',
                   'unitType': 'content',
-                  'content': 'group 2 content 1'
+                  'content': 'g2 c1'
                 },
                 'g2c2': {
                   'id': 'g2c2',
                   'unitType': 'content',
-                  'content': 'group 2 content 2'
+                  'content': 'g2 c2'
+                },
+                'g2g1': {
+                  'id': 'g2g1',
+                  'unitType': 'group',
+                  'css': 'group',
+                  'heir': ['g2g1c1', 'g2g1g1']
+                },
+                'g2g1c1': {
+                  'id': 'g2g1c1',
+                  'unitType': 'content',
+                  'content': 'g2 g1 c1'
+                },
+                'g2g1g1': {
+                  'id': 'g2g1g1',
+                  'unitType': 'group',
+                  'css': 'group',
+                  'heir': ['g2g1g1c1']
+                },
+                'g2g1g1c1': {
+                  'id': 'g2g1g1c1',
+                  'unitType': 'content',
+                  'content': 'g2 g1 g1 c1'
                 }
               };
           return {
